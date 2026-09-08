@@ -13,7 +13,7 @@
     ::-webkit-scrollbar-thumb { background: #06b6d4; border-radius: 10px; }
   </style>
 </head>
-<body class="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 text-slate-100 min-h-screen p-6 font-sans">
+<body id="main-body" class="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 text-slate-100 min-h-screen p-6 font-sans transition-colors duration-300">
   
   <!-- Header -->
   <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-cyan-900/50 pb-4">
@@ -25,10 +25,14 @@
         <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-500 tracking-wider drop-shadow-md">
           FOXST NETWORK NOC
         </h1>
-        <p class="text-xs text-cyan-200/70 font-mono">Hệ thống Giám sát Hạ tầng Không gian mạng (Mock Mode)</p>
+        <p class="text-xs text-cyan-200/70 font-mono">Hệ thống Giám sát Hạ tầng Không gian mạng</p>
       </div>
     </div>
     <div class="flex items-center gap-3 mt-4 md:mt-0">
+      <!-- Nút Tải Báo Cáo -->
+      <button onclick="exportCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.4)] transition">
+        📥 XUẤT BÁO CÁO CSV
+      </button>
       <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/50 shadow-[0_0_10px_rgba(217,70,239,0.3)]">
         <span class="w-2.5 h-2.5 rounded-full bg-fuchsia-400 animate-ping mr-2"></span> SYSTEM ACTIVE
       </span>
@@ -87,7 +91,6 @@
         <span class="text-xs font-mono text-green-500 ml-2">root@foxst-syslog:~#</span>
       </div>
       <div id="terminal-log" class="font-mono text-[11px] text-green-400 space-y-1 overflow-y-auto max-h-64 flex-1 flex flex-col justify-end">
-        <!-- Chữ chạy ở đây -->
       </div>
     </div>
   </section>
@@ -103,6 +106,7 @@
             <th class="p-4">Tên Thiết Bị</th>
             <th class="p-4">Địa Chỉ IP</th>
             <th class="p-4">Trạng Thái</th>
+            <th class="p-4">Hành Động</th>
           </tr>
         </thead>
         <tbody id="hosts-table-body" class="divide-y divide-slate-800/50">
@@ -110,6 +114,9 @@
       </table>
     </div>
   </section>
+
+  <!-- Thẻ Audio để phát tiếng còi báo động -->
+  <audio id="alert-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" preload="auto"></audio>
 
   <script src="/app.js"></script>
 </body>

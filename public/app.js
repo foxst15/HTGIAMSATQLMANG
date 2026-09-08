@@ -1,3 +1,4 @@
+// Dữ liệu giả lập
 const mockHosts = [
   { hostid: "FX-01", name: "Core-Switch-Cisco", ip: "192.168.1.254", status: "0" },
   { hostid: "FX-02", name: "Web-Server-Nginx", ip: "192.168.1.10", status: "0" },
@@ -11,16 +12,16 @@ let timeLabels = ["10:00", "10:05", "10:10", "10:15", "10:20", "10:25"];
 let inboundData = [45, 60, 55, 80, 70, 95];
 let outboundData = [20, 35, 30, 45, 40, 60];
 
+// 1. Khởi tạo biểu đồ Chart.js
 function initChart() {
   const ctx = document.getElementById("trafficChart").getContext("2d");
   
-  // Custom gradient cho Chart
   let inGradient = ctx.createLinearGradient(0, 0, 0, 400);
-  inGradient.addColorStop(0, 'rgba(6, 182, 212, 0.5)'); // Cyan
+  inGradient.addColorStop(0, 'rgba(6, 182, 212, 0.5)'); 
   inGradient.addColorStop(1, 'rgba(6, 182, 212, 0)');
 
   let outGradient = ctx.createLinearGradient(0, 0, 0, 400);
-  outGradient.addColorStop(0, 'rgba(217, 70, 239, 0.5)'); // Fuchsia
+  outGradient.addColorStop(0, 'rgba(217, 70, 239, 0.5)'); 
   outGradient.addColorStop(1, 'rgba(217, 70, 239, 0)');
 
   trafficChart = new Chart(ctx, {
@@ -30,18 +31,14 @@ function initChart() {
       datasets: [
         {
           label: "Inbound (Mbps)",
-          borderColor: "#06b6d4",
-          backgroundColor: inGradient,
-          data: inboundData,
-          tension: 0.4, fill: true, borderWidth: 2,
+          borderColor: "#06b6d4", backgroundColor: inGradient,
+          data: inboundData, tension: 0.4, fill: true, borderWidth: 2,
           pointBackgroundColor: "#000", pointBorderColor: "#06b6d4", pointBorderWidth: 2,
         },
         {
           label: "Outbound (Mbps)",
-          borderColor: "#d946ef",
-          backgroundColor: outGradient,
-          data: outboundData,
-          tension: 0.4, fill: true, borderWidth: 2,
+          borderColor: "#d946ef", backgroundColor: outGradient,
+          data: outboundData, tension: 0.4, fill: true, borderWidth: 2,
           pointBackgroundColor: "#000", pointBorderColor: "#d946ef", pointBorderWidth: 2,
         }
       ]
@@ -58,7 +55,7 @@ function initChart() {
   });
 }
 
-// Render Host
+// 2. Render Danh sách Hosts lên Table
 function loadHosts() {
   document.getElementById("total-hosts").textContent = mockHosts.length;
   document.getElementById("hosts-online").textContent = mockHosts.filter(h => h.status === "0").length;
@@ -76,38 +73,26 @@ function loadHosts() {
           ${h.status === "0" ? "ONLINE" : "OFFLINE"}
         </span>
       </td>
+      <td class="p-4 flex gap-2">
+        <button onclick="actionPing('${h.ip}', '${h.name}')" class="bg-cyan-600/50 hover:bg-cyan-500 text-white px-3 py-1 rounded text-[10px] transition">PING</button>
+        <button onclick="actionRestart('${h.hostid}', '${h.name}')" class="bg-rose-600/50 hover:bg-rose-500 text-white px-3 py-1 rounded text-[10px] transition">RESTART</button>
+      </td>
     </tr>
   `).join("");
 }
 
-// Random tài nguyên CPU/RAM
-function updateResources() {
-  const cpu = Math.floor(Math.random() * (85 - 20) + 20);
-  const ram = Math.floor(Math.random() * (95 - 40) + 40);
-  
-  document.getElementById("cpu-bar").style.width = cpu + "%";
-  document.getElementById("cpu-text").textContent = cpu + "%";
-  
-  document.getElementById("ram-bar").style.width = ram + "%";
-  document.getElementById("ram-text").textContent = ram + "%";
-
-  // Cảnh báo nếu CPU > 80%
-  if(cpu > 80) addTerminalLog(`[WARN] CPU Usage critical high: ${cpu}%`, "text-yellow-400");
-}
-
-// Chạy mã Terminal
+// 3. Quản lý hệ thống Log ở Terminal
 const terminalLogs = [];
 function addTerminalLog(msg, colorClass = "text-green-400") {
   const now = new Date().toLocaleTimeString();
   terminalLogs.push(`<p class="${colorClass}">[${now}] ${msg}</p>`);
-  if (terminalLogs.length > 10) terminalLogs.shift();
+  if (terminalLogs.length > 10) terminalLogs.shift(); // Chỉ giữ 10 dòng
   
   const terminalObj = document.getElementById("terminal-log");
   terminalObj.innerHTML = terminalLogs.join("");
   terminalObj.scrollTop = terminalObj.scrollHeight;
 }
 
-// Tạo log ngẫu nhiên
 function generateRandomLogs() {
   const logs = [
     "Ping statistics for 192.168.1.1: bytes=32 time=2ms TTL=64",
@@ -116,14 +101,25 @@ function generateRandomLogs() {
     "[INFO] Authorized user 'FoxST' session active.",
     "Firewall rule check: Passed",
   ];
-  
   if(Math.random() > 0.6) {
-    const randomLog = logs[Math.floor(Math.random() * logs.length)];
-    addTerminalLog(randomLog);
+    addTerminalLog(logs[Math.floor(Math.random() * logs.length)]);
   }
 }
 
-// Cập nhật biểu đồ
+// 4. Random tài nguyên CPU/RAM
+function updateResources() {
+  const cpu = Math.floor(Math.random() * (85 - 20) + 20);
+  const ram = Math.floor(Math.random() * (95 - 40) + 40);
+  
+  document.getElementById("cpu-bar").style.width = cpu + "%";
+  document.getElementById("cpu-text").textContent = cpu + "%";
+  document.getElementById("ram-bar").style.width = ram + "%";
+  document.getElementById("ram-text").textContent = ram + "%";
+
+  if(cpu > 80) addTerminalLog(`[WARN] CPU Usage critical high: ${cpu}%`, "text-yellow-400");
+}
+
+// 5. Cập nhật dữ liệu biểu đồ
 function updateChartData() {
   const now = new Date();
   const timeString = String(now.getMinutes()).padStart(2, '0') + ":" + String(now.getSeconds()).padStart(2, '0');
@@ -135,23 +131,81 @@ function updateChartData() {
   trafficChart.update();
 }
 
-// Loop chính
-function heartbeat() {
-  updateChartData();
-  updateResources();
-  generateRandomLogs();
+// 6. Tính năng tương tác: PING
+function actionPing(ip, name) {
+  addTerminalLog(`[CMD] Executing PING to ${name} (${ip})...`, "text-cyan-400");
+  setTimeout(() => {
+    addTerminalLog(`Reply from ${ip}: bytes=32 time=4ms TTL=64`, "text-emerald-400");
+    addTerminalLog(`Reply from ${ip}: bytes=32 time=5ms TTL=64`, "text-emerald-400");
+  }, 1000);
+}
+
+// 7. Tính năng tương tác: RESTART
+function actionRestart(id, name) {
+  addTerminalLog(`[WARN] Initiating remote reboot for node: ${name} (${id})`, "text-yellow-400");
+  document.getElementById("main-body").classList.add("bg-rose-950");
   
-  // Tình huống rớt mạng ngẫu nhiên
-  if(Math.random() > 0.8) {
+  setTimeout(() => {
+    addTerminalLog(`[OK] ${name} has been successfully rebooted.`, "text-emerald-400");
+    document.getElementById("main-body").classList.remove("bg-rose-950");
+  }, 2500);
+}
+
+// 8. Tính năng Xuất Báo Cáo CSV
+function exportCSV() {
+  addTerminalLog("[SYS] Generating CSV Report...", "text-fuchsia-400");
+  
+  let csvContent = "data:text/csv;charset=utf-8,";
+  csvContent += "ID,Ten Thiet Bi,IP Address,Trang Thai\n"; 
+  
+  mockHosts.forEach(function(rowArray) {
+      let statusText = rowArray.status === "0" ? "ONLINE" : "OFFLINE";
+      let row = `${rowArray.hostid},${rowArray.name},${rowArray.ip},${statusText}`;
+      csvContent += row + "\n";
+  });
+
+  var encodedUri = encodeURI(csvContent);
+  var link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", `FoxST_Network_Report_${new Date().getTime()}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  addTerminalLog("[SYS] CSV Report downloaded successfully.", "text-emerald-400");
+}
+
+// 9. Còi Báo Động (Chớp đỏ màn hình + Âm thanh)
+function triggerAlarm() {
+  if(Math.random() > 0.85) { 
+    addTerminalLog("[CRITICAL] MAJOR PACKET LOSS DETECTED!", "text-rose-500 font-bold text-sm bg-rose-900/50");
+    document.getElementById("main-body").classList.add("from-rose-950", "to-red-900");
+    
+    document.getElementById("alert-sound").play().catch(e => console.log("Trình duyệt chặn autoplay"));
+    
+    setTimeout(() => {
+      document.getElementById("main-body").classList.remove("from-rose-950", "to-red-900");
+    }, 2000);
+  } else if (Math.random() > 0.8) {
     addTerminalLog("[ERROR] Connection lost to FX-05 (Client-PC-ZoneA)!", "text-rose-500 font-bold");
   }
 }
 
+// 10. Vòng lặp chính (Heartbeat)
+function heartbeat() {
+  updateChartData();
+  updateResources();
+  generateRandomLogs();
+  triggerAlarm(); 
+}
+
+// Khởi chạy khi tải trang
 window.onload = () => {
   initChart();
   loadHosts();
   addTerminalLog("Booting FoxST Network System...");
   addTerminalLog("Establishing connection to nodes...");
   
-  setInterval(heartbeat, 3000); // 3 giây nháy 1 lần cho lẹ!
+  // Lặp lại mỗi 3 giây
+  setInterval(heartbeat, 3000); 
 };
