@@ -282,9 +282,10 @@ function initCableMap() {
     attributionControl: false
   }).setView([13.0583, 113.2772], 5); 
 
-  // Add giao diện vệ tinh bóng tối (Dark Matter)
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 10
+  // Thay thế giao diện CartoDB bị lỗi bằng OpenStreetMap miễn phí + Áp dụng Ma thuật CSS
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 10,
+    className: 'dark-map-filter' 
   }).addTo(submarineMap);
 
   // Tọa độ các trạm cáp quang
