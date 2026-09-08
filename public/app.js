@@ -1,10 +1,9 @@
-// Dữ liệu giả lập
+// Dữ liệu thiết bị (Pha trộn Thật & Giả)
 const mockHosts = [
-  { hostid: "FX-01", name: "Core-Switch-Cisco", ip: "192.168.1.254", status: "0" },
-  { hostid: "FX-02", name: "Web-Server-Nginx", ip: "192.168.1.10", status: "0" },
-  { hostid: "FX-03", name: "Database-MySQL", ip: "192.168.1.11", status: "0" },
-  { hostid: "FX-04", name: "Router-Gateway", ip: "192.168.1.1", status: "0" },
-  { hostid: "FX-05", name: "Client-PC-ZoneA", ip: "192.168.1.45", status: "1" }, 
+  { hostid: "WEB-FOX", name: "FoxAnime Platform", ip: "foxanime.top", status: "0", type: "real" }, 
+  { hostid: "FX-01", name: "Core-Switch-Cisco", ip: "192.168.1.254", status: "0", type: "mock" },
+  { hostid: "FX-02", name: "Database-MySQL", ip: "192.168.1.11", status: "0", type: "mock" },
+  { hostid: "FX-03", name: "Router-Gateway", ip: "192.168.1.1", status: "0", type: "mock" },
 ];
 
 let trafficChart;
@@ -76,6 +75,12 @@ function loadHosts() {
       <td class="p-4 flex gap-2">
         <button onclick="actionPing('${h.ip}', '${h.name}')" class="bg-cyan-600/50 hover:bg-cyan-500 text-white px-3 py-1 rounded text-[10px] transition">PING</button>
         <button onclick="actionRestart('${h.hostid}', '${h.name}')" class="bg-rose-600/50 hover:bg-rose-500 text-white px-3 py-1 rounded text-[10px] transition">RESTART</button>
+      </td>
+
+      <td class="p-4 flex gap-2">
+        <button onclick="showDetails('${h.name}', '${h.ip}', '${h.status}')" class="bg-indigo-600/50 hover:bg-indigo-500 text-white px-3 py-1 rounded text-[10px] transition font-bold">INFO</button>
+        <button onclick="actionPing('${h.ip}', '${h.name}')" class="bg-cyan-600/50 hover:bg-cyan-500 text-white px-3 py-1 rounded text-[10px] transition">PING</button>
+        <button onclick="actionRestart('${h.hostid}', '${h.name}')" class="bg-rose-600/50 hover:bg-rose-500 text-white px-3 py-1 rounded text-[10px] transition">REBOOT</button>
       </td>
     </tr>
   `).join("");
@@ -191,12 +196,39 @@ function triggerAlarm() {
   }
 }
 
+// ================= TÍNH NĂNG GIÁM SÁT WEBSITE THẬT =================
+async function monitorFoxAnime() {
+  const startTime = Date.now();
+  try {
+    // Gửi request thật tới website của chủ nhân (dùng no-cors để tránh lỗi chặn chéo)
+    await fetch('https://foxanime.top/', { mode: 'no-cors', cache: 'no-store' });
+    const latency = Date.now() - startTime;
+    
+    // In log đo ping thật lên Terminal (xác suất 50% để tránh trôi chữ quá nhanh)
+    if(Math.random() > 0.5) {
+      addTerminalLog(`[LIVE] foxanime.top is ONLINE - Latency: ${latency}ms`, "text-emerald-400 font-bold");
+    }
+
+    // Nếu web tải chậm hơn 1 giây (1000ms), báo vàng!
+    if(latency > 1000) {
+      addTerminalLog(`[WARN] foxanime.top đang tải chậm (${latency}ms)!`, "text-yellow-400");
+    }
+  } catch (error) {
+    // Nếu sập web thật, báo động đỏ luôn!
+    addTerminalLog(`[CRITICAL] foxanime.top IS UNREACHABLE!`, "text-rose-500 font-black bg-rose-900/50");
+    document.getElementById("main-body").classList.add("bg-rose-950");
+    setTimeout(() => { document.getElementById("main-body").classList.remove("bg-rose-950"); }, 2000);
+  }
+}
+// ===================================================================
+
 // 10. Vòng lặp chính (Heartbeat)
 function heartbeat() {
   updateChartData();
   updateResources();
   generateRandomLogs();
-  triggerAlarm(); 
+  triggerAlarm();
+  monitorFoxAnime(); 
 }
 
 // Khởi chạy khi tải trang
@@ -209,3 +241,33 @@ window.onload = () => {
   // Lặp lại mỗi 3 giây
   setInterval(heartbeat, 3000); 
 };
+
+// Tính năng bật Popup Chi Tiết
+function showDetails(name, ip, status) {
+  document.getElementById("detail-modal").classList.remove("hidden");
+  document.getElementById("detail-modal").classList.add("flex");
+  
+  // Điền dữ liệu vào bảng
+  document.getElementById("modal-hostname").textContent = name;
+  document.getElementById("modal-ip").textContent = ip;
+  
+  const statusEl = document.getElementById("modal-status");
+  if(status === "0") {
+    statusEl.textContent = "ONLINE";
+    statusEl.className = "text-emerald-400 font-black mt-1";
+  } else {
+    statusEl.textContent = "OFFLINE";
+    statusEl.className = "text-rose-500 font-black mt-1 animate-pulse";
+  }
+
+  // Tạo số ping ngẫu nhiên cho thật
+  const randomPing = Math.floor(Math.random() * 50) + 10;
+  document.getElementById("modal-ping").textContent = randomPing + " ms";
+  document.getElementById("modal-log").textContent = `[LIVE] Phản hồi mới nhất nhận lúc ${new Date().toLocaleTimeString()} - Ping: ${randomPing}ms`;
+}
+
+// Hàm đóng Popup
+function closeModal() {
+  document.getElementById("detail-modal").classList.add("hidden");
+  document.getElementById("detail-modal").classList.remove("flex");
+}

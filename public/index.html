@@ -119,5 +119,47 @@
   <audio id="alert-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" preload="auto"></audio>
 
   <script src="/app.js"></script>
+  <!-- Modal Chi Tiết Thiết Bị (Ẩn mặc định) -->
+  <div id="detail-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity">
+    <div class="bg-slate-900 border border-cyan-500/50 rounded-2xl w-11/12 max-w-lg shadow-[0_0_30px_rgba(6,182,212,0.3)] overflow-hidden">
+      <!-- Header Modal -->
+      <div class="bg-slate-800/80 p-4 border-b border-cyan-900 flex justify-between items-center">
+        <h3 class="text-cyan-400 font-bold font-mono text-lg flex items-center gap-2">
+          <span>⚙️</span> CHI TIẾT NODE: <span id="modal-hostname" class="text-white">FoxAnime</span>
+        </h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-rose-400 transition text-xl font-bold">&times;</button>
+      </div>
+      <!-- Body Modal -->
+      <div class="p-6 space-y-4">
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div class="bg-black/50 p-3 rounded border border-slate-700">
+            <p class="text-slate-500 font-mono text-xs">IP / DOMAIN</p>
+            <p id="modal-ip" class="text-cyan-300 font-bold mt-1">foxanime.top</p>
+          </div>
+          <div class="bg-black/50 p-3 rounded border border-slate-700">
+            <p class="text-slate-500 font-mono text-xs">TRẠNG THÁI</p>
+            <p id="modal-status" class="text-emerald-400 font-bold mt-1">ONLINE</p>
+          </div>
+          <div class="bg-black/50 p-3 rounded border border-slate-700">
+            <p class="text-slate-500 font-mono text-xs">THỜI GIAN PHẢN HỒI (PING)</p>
+            <p id="modal-ping" class="text-white font-bold mt-1">124 ms</p>
+          </div>
+          <div class="bg-black/50 p-3 rounded border border-slate-700">
+            <p class="text-slate-500 font-mono text-xs">UPTIME (HOẠT ĐỘNG)</p>
+            <p class="text-white font-bold mt-1">99.98%</p>
+          </div>
+        </div>
+        <!-- Log rieng cua thiet bi -->
+        <div class="mt-4">
+          <p class="text-cyan-500 font-mono text-xs mb-2">>> NHẬT KÝ KIỂM TRA GẦN NHẤT:</p>
+          <div class="bg-black p-3 rounded border border-slate-700 h-24 overflow-y-auto font-mono text-[11px] text-emerald-400 space-y-1">
+            <p>[SYS] Connection established on port 443.</p>
+            <p>[SYS] SSL Certificate valid.</p>
+            <p id="modal-log">[LIVE] Latency tracking normal.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
