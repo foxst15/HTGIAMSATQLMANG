@@ -282,10 +282,8 @@ function initCableMap() {
     attributionControl: false
   }).setView([13.0583, 113.2772], 5); 
 
-  // Thay thế giao diện CartoDB bị lỗi bằng OpenStreetMap miễn phí + Áp dụng Ma thuật CSS
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 10,
-    className: 'dark-map-filter' 
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 16
   }).addTo(submarineMap);
 
   // Tọa độ các trạm cáp quang
