@@ -234,11 +234,11 @@ function heartbeat() {
 // Khởi chạy khi tải trang
 window.onload = () => {
   initChart();
+  initCableMap(); 
   loadHosts();
   addTerminalLog("Booting FoxST Network System...");
   addTerminalLog("Establishing connection to nodes...");
   
-  // Lặp lại mỗi 3 giây
   setInterval(heartbeat, 3000); 
 };
 
@@ -270,4 +270,51 @@ function showDetails(name, ip, status) {
 function closeModal() {
   document.getElementById("detail-modal").classList.add("hidden");
   document.getElementById("detail-modal").classList.remove("flex");
+}
+
+// ================= TÍNH NĂNG BẢN ĐỒ CÁP QUANG =================
+let submarineMap;
+
+function initCableMap() {
+  // Khởi tạo bản đồ, focus vào khu vực Biển Đông
+  submarineMap = L.map('cableMap', {
+    zoomControl: false,
+    attributionControl: false
+  }).setView([13.0583, 113.2772], 5); 
+
+  // Add giao diện vệ tinh bóng tối (Dark Matter)
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 10
+  }).addTo(submarineMap);
+
+  // Tọa độ các trạm cáp quang
+  const vungTau = [10.3459, 107.0795];
+  const daNang = [16.0544, 108.2022];
+  const hongKong = [22.3193, 114.1694];
+  const singapore = [1.3521, 103.8198];
+
+  // Vẽ Tuyến APG (Màu xanh ngọc - Hoạt động)
+  const apgLine = L.polyline([daNang, [17.5, 110.0], hongKong], {
+    color: '#10b981', weight: 4, opacity: 0.8
+  }).addTo(submarineMap);
+  apgLine.bindPopup('<b style="color:#10b981">Tuyến APG</b><br>Trạng thái: Hoạt động tốt');
+
+  // Vẽ Tuyến AAE-1 (Màu xanh dương - Hoạt động)
+  const aae1Line = L.polyline([vungTau, [9.0, 112.0], [15.0, 115.0], hongKong], {
+    color: '#0ea5e9', weight: 3, opacity: 0.8
+  }).addTo(submarineMap);
+  aae1Line.bindPopup('<b style="color:#0ea5e9">Tuyến AAE-1</b><br>Trạng thái: Đang gánh tải');
+
+  // Vẽ Tuyến AAG (Màu Đỏ Nét Đứt - Bị đứt cáp)
+  const aagLine = L.polyline([vungTau, [7.5, 108.5], singapore], {
+    color: '#f43f5e', weight: 4, opacity: 0.9, dashArray: '8, 8'
+  }).addTo(submarineMap);
+  aagLine.bindPopup('<b style="color:#f43f5e">Tuyến AAG</b><br>Lỗi: Đứt cáp nhánh S1I');
+  
+  // Thêm chấm sáng tại các trạm
+  const stationStyle = { radius: 5, fillColor: "#fff", color: "#06b6d4", weight: 2, fillOpacity: 1 };
+  L.circleMarker(vungTau, stationStyle).addTo(submarineMap).bindTooltip("Trạm Vũng Tàu");
+  L.circleMarker(daNang, stationStyle).addTo(submarineMap).bindTooltip("Trạm Đà Nẵng");
+  L.circleMarker(hongKong, stationStyle).addTo(submarineMap).bindTooltip("Trạm Hong Kong");
+  L.circleMarker(singapore, stationStyle).addTo(submarineMap).bindTooltip("Trạm Singapore");
 }
