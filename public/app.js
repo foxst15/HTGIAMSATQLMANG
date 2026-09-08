@@ -1,7 +1,7 @@
 // Dữ liệu thiết bị (Pha trộn Thật & Giả)
 const mockHosts = [
   { hostid: "WEB-FOX", name: "FoxAnime Platform", ip: "foxanime.top", status: "0", type: "real" }, 
-  { hostid: "FX-01", name: "Core-Switch-Cisco", ip: "192.168.1.254", status: "0", type: "mock" },
+  { hostid: "FX-07", name: "FoxST-Workstation", ip: "192.168.1.7", status: "0", type: "mock" },
   { hostid: "FX-02", name: "Database-MySQL", ip: "192.168.1.11", status: "0", type: "mock" },
   { hostid: "FX-03", name: "Router-Gateway", ip: "192.168.1.1", status: "0", type: "mock" },
 ];
